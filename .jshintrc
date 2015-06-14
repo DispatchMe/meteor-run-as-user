@@ -1,0 +1,19 @@
+{
+  "strict": false,
+  "curly": false,
+  "globals"       : {
+    "Meteor": false,
+    "Npm": false,
+    "Match": false,
+    "_": false,
+    "check": false,
+    "Package": false,
+    "console": false,
+    "Tinytest": false,
+    "Mongo": false,
+    "DDP": false,
+    "DDPCommon": false,
+
+    "userScope": false
+  }
+}
