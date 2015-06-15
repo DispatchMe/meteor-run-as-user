@@ -1,16 +1,16 @@
-dispatch:run-as
+dispatch:run-as-user
 ===============
 
 Allow server and client to run as user in restricted mode.
 
 API:
-* `Meteor.runAs(userId, func)`
+* `Meteor.runAsUser(userId, func)`
 * `Meteor.restricted()`
 
 
 #### Examples
 ```js
-  Meteor.runAs(userId, function() {
+  Meteor.runAsUser(userId, function() {
     // Run method as user on both client or server
     Meteor.call('getUserId');
   });
@@ -24,7 +24,7 @@ API:
     insert: function(userId) { return !!userId; }
   });
 
-  Meteor.runAs(userId, function() {
+  Meteor.runAsUser(userId, function() {
     // This will throw errors on both client and server if
     // not allowed
     foo.insert({ name: 'foo'});
@@ -32,7 +32,7 @@ API:
 ```
 
 ```js
-  Meteor.runAs(userId, function() {
+  Meteor.runAsUser(userId, function() {
     if (Meteor.isRestricted()) {
       // Something in restricted mode
       console.log(Meteor.userId());

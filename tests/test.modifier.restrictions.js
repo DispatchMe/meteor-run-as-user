@@ -1,6 +1,6 @@
 // Test how allow and deny rules apply when working with the db
 
-var foo = new Mongo.Collection('run-as-test-collection');
+var foo = new Mongo.Collection('run-as-user-test-collection');
 
 if (Meteor.isServer) {
   foo.remove({});
@@ -30,12 +30,12 @@ var modify = function() {
 };
 
 
-Tinytest.add('Dispatch run-as - modify db - not logged in', function(test) {
+Tinytest.add('Dispatch run-as-user - modify db - not logged in', function(test) {
 
-  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAs');
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
-  Meteor.runAs(null, function() {
-    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAs');
+  Meteor.runAsUser(null, function() {
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
 
     test.isNull(Meteor.userId(), 'Meteor.userId() should be null');
 
@@ -46,12 +46,12 @@ Tinytest.add('Dispatch run-as - modify db - not logged in', function(test) {
 });
 
 
-Tinytest.add('Dispatch run-as - modify db - fake userId', function(test) {
+Tinytest.add('Dispatch run-as-user - modify db - fake userId', function(test) {
 
-  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAs');
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
-  Meteor.runAs('TEST', function() {
-    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAs');
+  Meteor.runAsUser('TEST', function() {
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
 
 
     if (Meteor.isClient) {
@@ -68,13 +68,13 @@ Tinytest.add('Dispatch run-as - modify db - fake userId', function(test) {
 });
 
 if (Meteor.isClient) {
-  userScope('Dispatch run-as - modify db', function(user) {
-    Tinytest.add('Dispatch run-as - modify db - real userId', function(test) {
+  userScope('Dispatch run-as-user - modify db', function(user) {
+    Tinytest.add('Dispatch run-as-user - modify db - real userId', function(test) {
 
-      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAs');
+      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
-      Meteor.runAs(user(), function() {
-        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAs');
+      Meteor.runAsUser(user(), function() {
+        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
 
         test.equal(Meteor.userId(), user(), 'Meteor.userId() should match current user');
 

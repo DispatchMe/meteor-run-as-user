@@ -1,7 +1,7 @@
 Package.describe({
-  name: 'dispatch:run-as',
+  name: 'dispatch:run-as-user',
   version: '0.0.1',
-  summary: 'Adds Meteor.runAs(user, f) and Meteor.isRestricted()'
+  summary: 'Adds Meteor.runAsUser(user, f) and Meteor.isRestricted()'
 });
 
 Package.onUse(function(api) {
@@ -31,7 +31,7 @@ Package.onTest(function(api) {
     'check',
     'mongo',
     'accounts-password',
-    'dispatch:run-as'
+    'dispatch:run-as-user'
   ]);
 
   api.addFiles([

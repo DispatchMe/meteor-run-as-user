@@ -1,27 +1,27 @@
 if (Meteor.isClient) {
 
-  userScope('Dispatch run-as - runAs loggedin', function(user) {
+  userScope('Dispatch run-as-user - runAsUser loggedin', function(user) {
 
-    Tinytest.add('Dispatch run-as - runAs loggedin - test', function(test) {
+    Tinytest.add('Dispatch run-as-user - runAsUser loggedin - test', function(test) {
       test.equal(Meteor.userId(), user(), 'User not logged in...');
 
-      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAs');
+      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
-      Meteor.runAs(null, function() {
-        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAs');
-
-        test.equal(Meteor.userId(), user(), 'When running on the client userId should match the loggedin user');
-      });
-
-      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAs');
-
-      Meteor.runAs('ID', function() {
-        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAs');
+      Meteor.runAsUser(null, function() {
+        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
 
         test.equal(Meteor.userId(), user(), 'When running on the client userId should match the loggedin user');
       });
 
-      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAs');
+      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
+
+      Meteor.runAsUser('ID', function() {
+        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
+
+        test.equal(Meteor.userId(), user(), 'When running on the client userId should match the loggedin user');
+      });
+
+      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
     });
   });

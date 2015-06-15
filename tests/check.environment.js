@@ -1,5 +1,5 @@
-Tinytest.add('Dispatch run-as - test scope', function(test) {
-  test.isNotUndefined(Meteor.runAs, 'Meteor.runAs not declared');
+Tinytest.add('Dispatch run-as-user - test scope', function(test) {
+  test.isNotUndefined(Meteor.runAsUser, 'Meteor.runAsUser not declared');
   test.isNotUndefined(Meteor.isRestricted, 'Meteor.isRestricted not declared');
 });
 

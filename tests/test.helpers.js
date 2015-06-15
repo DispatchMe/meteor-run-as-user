@@ -1,4 +1,4 @@
-var testUsername = 'test-run-as';
+var testUsername = 'test-run-as-user';
 var testUser = null;
 
 if (Meteor.isServer) {
