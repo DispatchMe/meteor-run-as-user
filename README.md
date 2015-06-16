@@ -5,7 +5,7 @@ Allow server and client to run as user in restricted mode.
 
 API:
 * `Meteor.runAsUser(userId, func)`
-* `Meteor.restricted()`
+* `Meteor.isRestricted()`
 
 
 #### Examples
