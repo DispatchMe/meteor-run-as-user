@@ -1,6 +1,13 @@
 Meteor.methods({
   'this userId': function() {
     return this.userId;
+  },
+  // Issue #1 replication
+  'recursive this userId': function(userId) {
+    return Meteor.runAsUser(userId, function() {
+      var user = Meteor.call('this userId');
+      return user;
+    });
   }
 });
 
@@ -88,6 +95,63 @@ Tinytest.add('Dispatch run-as-user - method call - runAsUser', function(test) {
   test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
 });
+
+Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #1 null', function(test, complete) {
+
+  Meteor.call('recursive this userId', null, function(err, result) {
+    if (!err) {
+
+      if (Meteor.isClient) {
+        test.equal(result, null, 'Calling method in a runAsUser should set userId to null');
+      } else {
+        test.equal(result, null, 'Calling method in a runAsUser should set userId to null');
+      }
+    }
+
+    complete(err);
+  });
+
+});
+
+Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #1 "TEST"', function(test, complete) {
+
+  Meteor.call('recursive this userId', 'TEST', function(err, result) {
+    if (!err) {
+
+      if (Meteor.isClient) {
+        test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+      } else {
+        test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+      }
+    }
+
+    complete(err);
+  });
+
+});
+
+if (Meteor.isClient) {
+  userScope('Dispatch run-as-user - method call - recursive method issue #1 "TEST" loggedin', function(user) {
+
+
+    Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #1 "TEST" loggedin - in runAsUser', function(test, complete) {
+
+      Meteor.call('recursive this userId', 'TEST', function(err, result) {
+        if (!err) {
+
+          if (Meteor.isClient) {
+            test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+          } else {
+            test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+          }
+        }
+
+        complete(err);
+      });
+
+    });
+  });
+}
 
 // Ref: http://vowsjs.org/#reference
 //
