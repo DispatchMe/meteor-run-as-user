@@ -3,11 +3,11 @@ Tinytest.add('Dispatch run-as-user - restrictions', function(test) {
   test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runRestricted');
 
   Meteor.runRestricted(function() {
-    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be false when inside a runRestricted');
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when inside a runRestricted');
     Meteor.runUnrestricted(function() {
       test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when inside runUnrestricted');
       Meteor.runRestricted(function() {
-        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be false when inside a runRestricted');
+        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when inside a runRestricted');
         Meteor.runUnrestricted(function() {
           test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when inside runUnrestricted');
         });
