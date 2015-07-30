@@ -35,11 +35,11 @@ Tinytest.add('Dispatch run-as-user - modify db - not logged in', function(test) 
   test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
   Meteor.runAsUser(null, function() {
-    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
+    test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when in a runAsUser');
 
     test.isNull(Meteor.userId(), 'Meteor.userId() should be null');
 
-    test.throws(modify);
+    modify();
 
   });
 
@@ -51,13 +51,13 @@ Tinytest.add('Dispatch run-as-user - modify db - fake userId', function(test) {
   test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
   Meteor.runAsUser('TEST', function() {
-    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
+    test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when in a runAsUser');
 
 
     if (Meteor.isClient) {
       // Client can't have a fake userId
       test.equal(Meteor.userId(), null, 'Meteor.userId() should be null');
-      test.throws(modify);
+      modify();
     } else {
       test.equal(Meteor.userId(), 'TEST', 'Meteor.userId() should be "TEST"');
       modify();
@@ -74,7 +74,7 @@ if (Meteor.isClient) {
       test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
 
       Meteor.runAsUser(user(), function() {
-        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsUser');
+        test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when in a runAsUser');
 
         test.equal(Meteor.userId(), user(), 'Meteor.userId() should match current user');
 
@@ -83,6 +83,67 @@ if (Meteor.isClient) {
     });
   });
 }
+
+///////////////////////
+
+Tinytest.add('Dispatch run-as-user - modify db restricted - not logged in', function(test) {
+
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsRestrictedUser');
+
+  Meteor.runAsRestrictedUser(null, function() {
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsRestrictedUser');
+
+    test.isNull(Meteor.userId(), 'Meteor.userId() should be null');
+
+    test.throws(modify);
+
+  });
+
+});
+
+
+Tinytest.add('Dispatch run-as-user - modify db restricted - fake userId', function(test) {
+
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsRestrictedUser');
+
+  Meteor.runAsRestrictedUser('TEST', function() {
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsRestrictedUser');
+
+
+    if (Meteor.isClient) {
+      // Client can't have a fake userId
+      test.equal(Meteor.userId(), null, 'Meteor.userId() should be null');
+      test.throws(modify);
+    } else {
+      test.equal(Meteor.userId(), 'TEST', 'Meteor.userId() should be "TEST"');
+      modify();
+    }
+
+  });
+
+});
+
+if (Meteor.isClient) {
+  userScope('Dispatch run-as-user - modify db restricted', function(user) {
+    Tinytest.add('Dispatch run-as-user - modify db restricted - real userId', function(test) {
+
+      test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsRestrictedUser');
+
+      Meteor.runAsRestrictedUser(user(), function() {
+        test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsRestrictedUser');
+
+        test.equal(Meteor.userId(), user(), 'Meteor.userId() should match current user');
+
+      });
+
+    });
+  });
+}
+
+
+
+
+
 
 // Ref: http://vowsjs.org/#reference
 //

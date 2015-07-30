@@ -5,6 +5,9 @@ Allow server and client to run as user in restricted mode.
 
 API:
 * `Meteor.runAsUser(userId, func)`
+* `Meteor.runAsRestrictedUser(userId, func)`
+* `Meteor.runRestricted(func)`
+* `Meteor.runUnrestricted(func)`
 * `Meteor.isRestricted()`
 
 
@@ -24,7 +27,7 @@ API:
     insert: function(userId) { return !!userId; }
   });
 
-  Meteor.runAsUser(userId, function() {
+  Meteor.runAsUserRestricted(userId, function() {
     // This will throw errors on both client and server if
     // not allowed
     foo.insert({ name: 'foo'});
@@ -32,12 +35,22 @@ API:
 ```
 
 ```js
-  Meteor.runAsUser(userId, function() {
+  Meteor.runAsRestrictedUser(userId, function() {
     if (Meteor.isRestricted()) {
       // Something in restricted mode
       console.log(Meteor.userId());
     } else {
       // Safe mode
     }
+  });
+```
+
+#### Restrictions API:
+```js
+  Meteor.runRestricted(function() {
+    // Meteor.isRestricted() === true
+    Meteor.runUnrestricted(function() {
+      // Meteor.isRestricted() === false
+    });
   });
 ```

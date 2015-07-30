@@ -1,6 +1,6 @@
 Package.describe({
   name: 'dispatch:run-as-user',
-  version: '0.0.2',
+  version: '1.0.0',
   summary: 'Adds Meteor.runAsUser(user, f) and Meteor.isRestricted()',
   git: 'https://github.com/DispatchMe/Meteor-run-as-user.git',
   documentation: 'README.md'
@@ -42,7 +42,8 @@ Package.onTest(function(api) {
     'tests/test.js',
     'tests/test.loggedin.js',
     'tests/test.methods.js',
-    'tests/test.modifier.restrictions.js'
+    'tests/test.modifier.restrictions.js',
+    'tests/test.restrictions.js'
   ]);
 
 });
