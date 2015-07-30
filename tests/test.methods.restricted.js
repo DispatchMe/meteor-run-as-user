@@ -4,7 +4,7 @@ Meteor.methods({
   },
   // Issue #1 replication
   'recursive this userId': function(userId) {
-    return Meteor.runAsUser(userId, function() {
+    return Meteor.runAsRestrictedUser(userId, function() {
       var user = Meteor.call('this userId');
       return user;
     });
@@ -14,24 +14,24 @@ Meteor.methods({
 Tinytest.addAsync('Dispatch run-as-user - method call - outside', function(test, complete) {
   Meteor.call('this userId', function(err, result) {
     if (!err) {
-      test.equal(result, null, 'Calling method outside a runAsUser should set userId to null');
+      test.equal(result, null, 'Calling method outside a runAsRestrictedUser should set userId to null');
     }
 
     complete(err);
   });
 });
 
-Tinytest.addAsync('Dispatch run-as-user - method call - in runAsUser', function(test, complete) {
+Tinytest.addAsync('Dispatch run-as-user - method call - in runAsRestrictedUser', function(test, complete) {
 
-  Meteor.runAsUser('TEST', function() {
+  Meteor.runAsRestrictedUser('TEST', function() {
 
     Meteor.call('this userId', function(err, result) {
       if (!err) {
 
         if (Meteor.isClient) {
-          test.equal(result, null, 'Calling method in a runAsUser should set userId to null');
+          test.equal(result, null, 'Calling method in a runAsRestrictedUser should set userId to null');
         } else {
-          test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+          test.equal(result, 'TEST', 'Calling method in a runAsRestrictedUser should set userId to "TEST"');
         }
       }
 
@@ -43,21 +43,21 @@ Tinytest.addAsync('Dispatch run-as-user - method call - in runAsUser', function(
 
 if (Meteor.isClient) {
 
-  userScope('Dispatch run-as-user - method call - runAsUser loggedin', function(user) {
+  userScope('Dispatch run-as-user - method call - runAsRestrictedUser loggedin', function(user) {
 
 
-    Tinytest.addAsync('Dispatch run-as-user - method call - runAsUser loggedin - in runAsUser', function(test, complete) {
+    Tinytest.addAsync('Dispatch run-as-user - method call - runAsRestrictedUser loggedin - in runAsRestrictedUser', function(test, complete) {
 
       test.equal(Meteor.userId(), user(), 'User is not logged in');
 
-      Meteor.runAsUser('TEST', function() {
+      Meteor.runAsRestrictedUser('TEST', function() {
 
         test.equal(Meteor.userId(), user(), 'We should not be able to run as other users on client');
 
         Meteor.call('this userId', function(err, result) {
           if (!err) {
 
-            test.equal(result, user(), 'Calling method in a runAsUser should set userId to current user');
+            test.equal(result, user(), 'Calling method in a runAsRestrictedUser should set userId to current user');
           }
 
           complete(err);
@@ -70,29 +70,29 @@ if (Meteor.isClient) {
 
 }
 
-Tinytest.add('Dispatch run-as-user - method call - runAsUser', function(test) {
+Tinytest.add('Dispatch run-as-user - method call - runAsRestrictedUser', function(test) {
 
-  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsRestrictedUser');
 
-  Meteor.runAsUser(null, function() {
-    test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when in a runAsUser');
+  Meteor.runAsRestrictedUser(null, function() {
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsRestrictedUser');
 
     test.isNull(Meteor.userId(), 'Meteor.userId() should be null');
   });
 
-  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsRestrictedUser');
 
-  Meteor.runAsUser('ID', function() {
-    test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when in a runAsUser');
+  Meteor.runAsRestrictedUser('ID', function() {
+    test.isTrue(Meteor.isRestricted(), 'Meteor.isRestricted should be true when in a runAsRestrictedUser');
 
     if (Meteor.isServer) {
-      test.equal(Meteor.userId(), 'ID', 'Meteor.userId() should be "ID" in this runAsUser');
+      test.equal(Meteor.userId(), 'ID', 'Meteor.userId() should be "ID" in this runAsRestrictedUser');
     } else {
       test.isNull(Meteor.userId(), 'Meteor.userId() should be null on the client');
     }
   });
 
-  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsUser');
+  test.isFalse(Meteor.isRestricted(), 'Meteor.isRestricted should be false when outside a runAsRestrictedUser');
 
 });
 
@@ -102,9 +102,9 @@ Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #
     if (!err) {
 
       if (Meteor.isClient) {
-        test.equal(result, null, 'Calling method in a runAsUser should set userId to null');
+        test.equal(result, null, 'Calling method in a runAsRestrictedUser should set userId to null');
       } else {
-        test.equal(result, null, 'Calling method in a runAsUser should set userId to null');
+        test.equal(result, null, 'Calling method in a runAsRestrictedUser should set userId to null');
       }
     }
 
@@ -119,9 +119,9 @@ Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #
     if (!err) {
 
       if (Meteor.isClient) {
-        test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+        test.equal(result, 'TEST', 'Calling method in a runAsRestrictedUser should set userId to "TEST"');
       } else {
-        test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+        test.equal(result, 'TEST', 'Calling method in a runAsRestrictedUser should set userId to "TEST"');
       }
     }
 
@@ -134,15 +134,15 @@ if (Meteor.isClient) {
   userScope('Dispatch run-as-user - method call - recursive method issue #1 "TEST" loggedin', function(user) {
 
 
-    Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #1 "TEST" loggedin - in runAsUser', function(test, complete) {
+    Tinytest.addAsync('Dispatch run-as-user - method call - recursive method issue #1 "TEST" loggedin - in runAsRestrictedUser', function(test, complete) {
 
       Meteor.call('recursive this userId', 'TEST', function(err, result) {
         if (!err) {
 
           if (Meteor.isClient) {
-            test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+            test.equal(result, 'TEST', 'Calling method in a runAsRestrictedUser should set userId to "TEST"');
           } else {
-            test.equal(result, 'TEST', 'Calling method in a runAsUser should set userId to "TEST"');
+            test.equal(result, 'TEST', 'Calling method in a runAsRestrictedUser should set userId to "TEST"');
           }
         }
 
