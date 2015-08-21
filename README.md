@@ -54,3 +54,35 @@ API:
     });
   });
 ```
+
+#### Run outside an invocation
+```js
+  // On the client
+  Meteor.methods({
+    'foo': function() {    
+      DDP._CurrentInvocation.get(); // Invocation object
+      Meteor.runOutsideInvocation(function() {
+        DDP._CurrentInvocation.get(); // Invocation object
+      });
+    }
+  });
+
+  // On the server
+  Meteor.methods({
+    'foo': function() {    
+      DDP._CurrentInvocation.get(); // Invocation object
+      Meteor.runOutsideInvocation(function() {
+        DDP._CurrentInvocation.get(); // null
+      });
+    }
+  });
+```
+
+#### Run as `admin`
+Like `restricted`/`unrestricted` can be useful a flag `isAdmin` can be used more generally.
+```js
+  Meteor.isAdmin(); // false
+  Meteor.runAsAdmin(function() {
+    Meteor.isAdmin(); // true
+    });
+```
